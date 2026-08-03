@@ -3,7 +3,7 @@
 A robust, enterprise-grade RESTful API built with FastAPI, SQLAlchemy, and PostgreSQL that implements a comprehensive Point of Sale (POS) book retail system alongside an automated library book rental and tracking facility.
  Architectural Pillars
 
- Clean Architecture Pattern: Strict segregation of project boundaries spanning Models ──► Schemas ──► Repositories ──► Services ──► Routers to maximize testability and maintenance decoupling.
+ Clean Architecture Pattern: Strict segregation of project boundaries spanning Models, Schemas, Repositories, Services and Routers to maximize testability and maintenance decoupling.
  
 ** Automated Inventory Lifecycle Engine**: Fully integrated, transactional service logic that maintains stock counts safely without race 
  conditions:
