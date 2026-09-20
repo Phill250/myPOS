@@ -10,9 +10,9 @@ class ReceiptCreate(ReceiptBase):
     pass
 
 class ReceiptUpdate(BaseModel):
+    """sale_id and rental_id are fixed at creation time — a receipt should
+    always point to the transaction it was actually printed for."""
     receipt_number: str | None = None
-    sale_id: int | None = None
-    rental_id: int | None = None
 
 class ReceiptRead(ReceiptBase):
     model_config = ConfigDict(from_attributes=True)

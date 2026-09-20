@@ -8,6 +8,9 @@ class RetailSaleRepository:
     def get_all(self, db: Session):
         return db.query(RetailSale).all()
 
+    def get_all_for_customer(self, db: Session, customer_id: int):
+        return db.query(RetailSale).filter(RetailSale.customer_id == customer_id).all()
+
     def create(self, db: Session, data: dict):
         db_sale = RetailSale(**data)
         db.add(db_sale)

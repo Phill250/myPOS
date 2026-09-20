@@ -8,6 +8,9 @@ class LibraryRentalRepository:
     def get_all(self, db: Session):
         return db.query(LibraryRental).all()
 
+    def get_all_for_customer(self, db: Session, customer_id: int):
+        return db.query(LibraryRental).filter(LibraryRental.customer_id == customer_id).all()
+
     def create(self, db: Session, data: dict):
         db_rental = LibraryRental(**data)
         db.add(db_rental)
@@ -26,5 +29,6 @@ class LibraryRentalRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 library_rental_repository = LibraryRentalRepository()

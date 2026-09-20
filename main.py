@@ -20,3 +20,8 @@ app.include_router(library_rental_items.router)
 app.include_router(payments.router)
 app.include_router(suppliers.router)
 app.include_router(receipts.router)
+
+
+@app.get("/")
+def root():
+    return {"message": "Welcome to the POS API"}

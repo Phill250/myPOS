@@ -15,6 +15,9 @@ def get_sale(db: Session, id: int):
 def list_sales(db: Session):
     return retail_sale_repository.get_all(db)
 
+def list_sales_for_customer(db: Session, customer_id: int):
+    return retail_sale_repository.get_all_for_customer(db, customer_id)
+
 def create_sale(db: Session, data: RetailSaleCreate): 
     from models.users import User
     user_exists = db.query(User).filter(User.user_id == data.user_id).first()

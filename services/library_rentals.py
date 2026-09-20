@@ -15,6 +15,9 @@ def get_rental(db: Session, id: int):
 def list_rentals(db: Session):
     return library_rental_repository.get_all(db)
 
+def list_rentals_for_customer(db: Session, customer_id: int):
+    return library_rental_repository.get_all_for_customer(db, customer_id)
+
 def create_rental(db: Session, data: LibraryRentalCreate): 
     return library_rental_repository.create(db, data.model_dump())
 

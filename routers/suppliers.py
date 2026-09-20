@@ -3,8 +3,13 @@ from database import get_db
 from sqlalchemy.orm import Session
 from schemas.suppliers import SupplierCreate, SupplierRead, SupplierUpdate
 from services import suppliers as supplier_service
+from dependencies import require_role
 
-router = APIRouter(prefix="/suppliers", tags=["suppliers"])
+router = APIRouter(
+    prefix="/suppliers",
+    tags=["suppliers"],
+    dependencies=[Depends(require_role("staff", "super_admin"))],  # not visible to customers at all
+)
 
 @router.get("/", response_model=list[SupplierRead])
 def list_suppliers(db: Session = Depends(get_db)):

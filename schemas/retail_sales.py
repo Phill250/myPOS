@@ -10,9 +10,10 @@ class RetailSaleCreate(RetailSaleBase):
     pass
 
 class RetailSaleUpdate(BaseModel):
+    """Only total_amount can be corrected after a sale is created.
+    customer_id and user_id are fixed at creation time and cannot be
+    reassigned — the sale record should reflect who was actually involved."""
     total_amount: int | None = None
-    customer_id: int | None = None
-    user_id: int | None = None
 
 class RetailSaleRead(RetailSaleBase):
     model_config = ConfigDict(from_attributes=True)
