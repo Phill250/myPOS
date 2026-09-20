@@ -138,6 +138,7 @@ Pygments==2.19.2
 PyJWT==2.13.0
 pymdown-extensions==11.0.2
 pyparsing==3.3.2
+pytest==8.4.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-http-client==3.3.7
