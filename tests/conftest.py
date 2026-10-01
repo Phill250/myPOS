@@ -1,38 +1,42 @@
 import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 os.environ["DATABASE_URL"] = "sqlite://"
 
 from database import Base, get_db
 from main import app
 
-engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+engine = create_engine(
+    "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+)
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 @pytest.fixture
 def client():
     Base.metadata.create_all(bind=engine)
-    
+
     def override_get_db():
         db = TestingSessionLocal()
         try:
             yield db
         finally:
             db.close()
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     yield TestClient(app)
-    
+
     app.dependency_overrides.clear()
     Base.metadata.drop_all(bind=engine)
-    
-    
+
+
 @pytest.fixture
 def test_user(client):
     user_data = {
@@ -40,10 +44,11 @@ def test_user(client):
         "email": "testuser@example.com",
         "password": "testpassword",
     }
-    
+
     response = client.post("/users/register", json=user_data)
     user_data["user_id"] = response.json().get("user_id")
     return user_data
+
 
 @pytest.fixture
 def auth_headers(client, test_user):
@@ -61,9 +66,8 @@ def staff_user(client):
     since /users/register always forces role='customer' and /users/ (admin
     create) is itself locked behind an existing super_admin — so tests need
     a side-door the same way seed_super_admin.py does for real deployments."""
-    from database import Base
-    from services import auth_services
     from schemas.users import UserCreateByAdmin
+    from services import auth_services
 
     db = TestingSessionLocal()
     try:
@@ -95,8 +99,8 @@ def staff_auth_headers(client, staff_user):
 def admin_user(client):
     """Creates a super_admin-role user directly in the DB, bypassing the API,
     the same way seed_super_admin.py bootstraps the very first admin."""
-    from services import auth_services
     from schemas.users import UserCreateByAdmin
+    from services import auth_services
 
     db = TestingSessionLocal()
     try:

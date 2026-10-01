@@ -1,14 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from database import get_db
 from sqlalchemy.orm import Session
+
+from database import get_db
+from dependencies import get_current_user, require_role
 from schemas.retail_sales import RetailSaleCreate, RetailSaleRead, RetailSaleUpdate
 from services import retail_sales as retail_sale_service
-from dependencies import get_current_user, require_role
 
 router = APIRouter(
     prefix="/sales",
     tags=["sales"],
-    dependencies=[Depends(get_current_user)],  # baseline: must be logged in for every route below
+    dependencies=[
+        Depends(get_current_user)
+    ],  # baseline: must be logged in for every route below
 )
 
 
@@ -23,7 +26,9 @@ def list_sales(db: Session = Depends(get_db), current_user=Depends(get_current_u
 
 
 @router.get("/{sale_id}", response_model=RetailSaleRead)
-def get_sale(sale_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+def get_sale(
+    sale_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)
+):
     sale = retail_sale_service.get_sale(db, sale_id)
 
     if current_user.role == "customer":

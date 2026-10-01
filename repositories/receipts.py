@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from models.receipts import Receipt
+
 
 class ReceiptRepository:
     def get(self, db: Session, id: int):
@@ -26,5 +28,6 @@ class ReceiptRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 receipt_repository = ReceiptRepository()

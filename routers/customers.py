@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from database import get_db
 from sqlalchemy.orm import Session
+
+from database import get_db
+from dependencies import get_current_user, require_role
 from schemas.customers import CustomerCreate, CustomerRead, CustomerUpdate
 from services import customers as customer_service
-from dependencies import get_current_user, require_role
 
 router = APIRouter(
     prefix="/customers",
@@ -56,7 +57,9 @@ def create_customer(data: CustomerCreate, db: Session = Depends(get_db)):
     response_model=CustomerRead,
     dependencies=[Depends(require_role("staff", "super_admin"))],
 )
-def update_customer(customer_id: int, data: CustomerUpdate, db: Session = Depends(get_db)):
+def update_customer(
+    customer_id: int, data: CustomerUpdate, db: Session = Depends(get_db)
+):
     return customer_service.update_customer(db, customer_id, data)
 
 

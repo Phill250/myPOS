@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from database import get_db
 from sqlalchemy.orm import Session
+
+from database import get_db
+from dependencies import get_current_user, require_role
 from schemas.receipts import ReceiptCreate, ReceiptRead, ReceiptUpdate
 from services import receipts as receipt_service
-from dependencies import get_current_user, require_role
 
 router = APIRouter(
     prefix="/receipts",
@@ -22,18 +23,26 @@ def _receipt_customer_id(receipt) -> int | None:
 
 
 @router.get("/", response_model=list[ReceiptRead])
-def list_receipts(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+def list_receipts(
+    db: Session = Depends(get_db), current_user=Depends(get_current_user)
+):
     if current_user.role == "customer":
         linked = getattr(current_user, "customer_profile", None)
         if not linked:
             return []
         all_receipts = receipt_service.list_receipts(db)
-        return [r for r in all_receipts if _receipt_customer_id(r) == linked.customer_id]
+        return [
+            r for r in all_receipts if _receipt_customer_id(r) == linked.customer_id
+        ]
     return receipt_service.list_receipts(db)
 
 
 @router.get("/{receipt_id}", response_model=ReceiptRead)
-def get_receipt(receipt_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+def get_receipt(
+    receipt_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     receipt = receipt_service.get_receipt(db, receipt_id)
 
     if current_user.role == "customer":

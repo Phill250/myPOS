@@ -1,9 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from database import get_db
 from sqlalchemy.orm import Session
-from schemas.library_rentals import LibraryRentalCreate, LibraryRentalRead, LibraryRentalUpdate
-from services import library_rentals as library_rental_service
+
+from database import get_db
 from dependencies import get_current_user, require_role
+from schemas.library_rentals import (
+    LibraryRentalCreate,
+    LibraryRentalRead,
+    LibraryRentalUpdate,
+)
+from services import library_rentals as library_rental_service
 
 router = APIRouter(
     prefix="/library-rentals",
@@ -23,7 +28,11 @@ def list_rentals(db: Session = Depends(get_db), current_user=Depends(get_current
 
 
 @router.get("/{rental_id}", response_model=LibraryRentalRead)
-def get_rental(rental_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+def get_rental(
+    rental_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     rental = library_rental_service.get_rental(db, rental_id)
 
     if current_user.role == "customer":
@@ -52,7 +61,9 @@ def create_rental(data: LibraryRentalCreate, db: Session = Depends(get_db)):
     response_model=LibraryRentalRead,
     dependencies=[Depends(require_role("staff", "super_admin"))],
 )
-def update_rental(rental_id: int, data: LibraryRentalUpdate, db: Session = Depends(get_db)):
+def update_rental(
+    rental_id: int, data: LibraryRentalUpdate, db: Session = Depends(get_db)
+):
     return library_rental_service.update_rental(db, rental_id, data)
 
 

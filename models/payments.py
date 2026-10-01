@@ -1,10 +1,12 @@
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from database import Base
+
 
 class Payment(Base):
     __tablename__ = "payments"
-    
+
     payment_id = Column(Integer, primary_key=True, index=True)
     amount = Column(Float, nullable=False)
     payment_method = Column(String(50), nullable=False)

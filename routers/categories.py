@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
-from database import get_db
 from sqlalchemy.orm import Session
+
+from database import get_db
+from dependencies import get_current_user, require_role
 from schemas.categories import CategoryCreate, CategoryRead, CategoryUpdate
 from services import categories as category_service
-from dependencies import get_current_user, require_role
-
 
 router = APIRouter(
     prefix="/categories",
@@ -38,7 +38,9 @@ def create_category(data: CategoryCreate, db: Session = Depends(get_db)):
     response_model=CategoryRead,
     dependencies=[Depends(require_role("staff", "super_admin"))],
 )
-def update_category(category_id: int, data: CategoryUpdate, db: Session = Depends(get_db)):
+def update_category(
+    category_id: int, data: CategoryUpdate, db: Session = Depends(get_db)
+):
     return category_service.update_category(db, category_id, data)
 
 

@@ -6,11 +6,15 @@ def test_list_receipts_success(client, staff_auth_headers):
 
 def test_get_receipt_success(client, staff_auth_headers, staff_user):
     sale_id = client.post(
-        "/sales/", json={"total_amount": 5000, "user_id": staff_user["user_id"]}, headers=staff_auth_headers
+        "/sales/",
+        json={"total_amount": 5000, "user_id": staff_user["user_id"]},
+        headers=staff_auth_headers,
     ).json()["sale_id"]
 
     receipt_data = {"receipt_number": "RCPT-001", "sale_id": sale_id}
-    create_response = client.post("/receipts/", json=receipt_data, headers=staff_auth_headers)
+    create_response = client.post(
+        "/receipts/", json=receipt_data, headers=staff_auth_headers
+    )
     receipt_id = create_response.json()["receipt_id"]
 
     response = client.get(f"/receipts/{receipt_id}", headers=staff_auth_headers)
@@ -20,7 +24,9 @@ def test_get_receipt_success(client, staff_auth_headers, staff_user):
 
 def test_create_receipt_for_sale_success(client, staff_auth_headers, staff_user):
     sale_id = client.post(
-        "/sales/", json={"total_amount": 5000, "user_id": staff_user["user_id"]}, headers=staff_auth_headers
+        "/sales/",
+        json={"total_amount": 5000, "user_id": staff_user["user_id"]},
+        headers=staff_auth_headers,
     ).json()["sale_id"]
 
     receipt_data = {"receipt_number": "RCPT-002", "sale_id": sale_id}
@@ -33,14 +39,25 @@ def test_create_receipt_for_sale_success(client, staff_auth_headers, staff_user)
 
 def test_create_receipt_for_rental_success(client, staff_auth_headers, staff_user):
     customer_data = {
-        "first_name": "Jane", "last_name": "Doe", "phone_number": "0700000001",
-        "email": "jane@example.com", "library_member": True,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone_number": "0700000001",
+        "email": "jane@example.com",
+        "library_member": True,
     }
-    customer_id = client.post("/customers/", json=customer_data, headers=staff_auth_headers).json()["customer_id"]
+    customer_id = client.post(
+        "/customers/", json=customer_data, headers=staff_auth_headers
+    ).json()["customer_id"]
 
-    rental_id = client.post("/library-rentals/", json={
-        "expected_return": "2026-12-01", "customer_id": customer_id, "user_id": staff_user["user_id"],
-    }, headers=staff_auth_headers).json()["rental_id"]
+    rental_id = client.post(
+        "/library-rentals/",
+        json={
+            "expected_return": "2026-12-01",
+            "customer_id": customer_id,
+            "user_id": staff_user["user_id"],
+        },
+        headers=staff_auth_headers,
+    ).json()["rental_id"]
 
     receipt_data = {"receipt_number": "RCPT-003", "rental_id": rental_id}
     response = client.post("/receipts/", json=receipt_data, headers=staff_auth_headers)
@@ -50,25 +67,37 @@ def test_create_receipt_for_rental_success(client, staff_auth_headers, staff_use
 
 def test_update_receipt_number_success(client, staff_auth_headers, staff_user):
     sale_id = client.post(
-        "/sales/", json={"total_amount": 5000, "user_id": staff_user["user_id"]}, headers=staff_auth_headers
+        "/sales/",
+        json={"total_amount": 5000, "user_id": staff_user["user_id"]},
+        headers=staff_auth_headers,
     ).json()["sale_id"]
     receipt_id = client.post(
-        "/receipts/", json={"receipt_number": "RCPT-004", "sale_id": sale_id}, headers=staff_auth_headers
+        "/receipts/",
+        json={"receipt_number": "RCPT-004", "sale_id": sale_id},
+        headers=staff_auth_headers,
     ).json()["receipt_id"]
 
     response = client.put(
-        f"/receipts/{receipt_id}", json={"receipt_number": "RCPT-004-FIXED"}, headers=staff_auth_headers
+        f"/receipts/{receipt_id}",
+        json={"receipt_number": "RCPT-004-FIXED"},
+        headers=staff_auth_headers,
     )
     assert response.status_code == 200
     assert response.json()["receipt_number"] == "RCPT-004-FIXED"
 
 
-def test_update_receipt_ignores_sale_id_reassignment(client, staff_auth_headers, staff_user):
+def test_update_receipt_ignores_sale_id_reassignment(
+    client, staff_auth_headers, staff_user
+):
     sale_id = client.post(
-        "/sales/", json={"total_amount": 5000, "user_id": staff_user["user_id"]}, headers=staff_auth_headers
+        "/sales/",
+        json={"total_amount": 5000, "user_id": staff_user["user_id"]},
+        headers=staff_auth_headers,
     ).json()["sale_id"]
     receipt_id = client.post(
-        "/receipts/", json={"receipt_number": "RCPT-005", "sale_id": sale_id}, headers=staff_auth_headers
+        "/receipts/",
+        json={"receipt_number": "RCPT-005", "sale_id": sale_id},
+        headers=staff_auth_headers,
     ).json()["receipt_id"]
 
     response = client.put(
@@ -80,13 +109,19 @@ def test_update_receipt_ignores_sale_id_reassignment(client, staff_auth_headers,
 
 def test_delete_receipt_success(client, staff_auth_headers, staff_user):
     sale_id = client.post(
-        "/sales/", json={"total_amount": 5000, "user_id": staff_user["user_id"]}, headers=staff_auth_headers
+        "/sales/",
+        json={"total_amount": 5000, "user_id": staff_user["user_id"]},
+        headers=staff_auth_headers,
     ).json()["sale_id"]
     receipt_id = client.post(
-        "/receipts/", json={"receipt_number": "RCPT-006", "sale_id": sale_id}, headers=staff_auth_headers
+        "/receipts/",
+        json={"receipt_number": "RCPT-006", "sale_id": sale_id},
+        headers=staff_auth_headers,
     ).json()["receipt_id"]
 
-    delete_response = client.delete(f"/receipts/{receipt_id}", headers=staff_auth_headers)
+    delete_response = client.delete(
+        f"/receipts/{receipt_id}", headers=staff_auth_headers
+    )
     assert delete_response.status_code == 204
 
     get_response = client.get(f"/receipts/{receipt_id}", headers=staff_auth_headers)
@@ -94,7 +129,9 @@ def test_delete_receipt_success(client, staff_auth_headers, staff_user):
 
 
 def test_create_receipt_missing_receipt_number_returns_422(client, staff_auth_headers):
-    response = client.post("/receipts/", json={"sale_id": 1}, headers=staff_auth_headers)
+    response = client.post(
+        "/receipts/", json={"sale_id": 1}, headers=staff_auth_headers
+    )
     assert response.status_code == 422
 
 
@@ -158,25 +195,45 @@ def test_customer_sees_only_own_receipt_via_sale(
     client, staff_auth_headers, staff_user, auth_headers, test_user
 ):
     customer_data = {
-        "first_name": "Test", "last_name": "Customer", "phone_number": "0700000000",
-        "email": "testuser@example.com", "library_member": False,
+        "first_name": "Test",
+        "last_name": "Customer",
+        "phone_number": "0700000000",
+        "email": "testuser@example.com",
+        "library_member": False,
         "user_id": test_user["user_id"],
     }
-    customer_id = client.post("/customers/", json=customer_data, headers=staff_auth_headers).json()["customer_id"]
+    customer_id = client.post(
+        "/customers/", json=customer_data, headers=staff_auth_headers
+    ).json()["customer_id"]
 
-    own_sale_id = client.post("/sales/", json={
-        "total_amount": 3000, "user_id": staff_user["user_id"], "customer_id": customer_id,
-    }, headers=staff_auth_headers).json()["sale_id"]
+    own_sale_id = client.post(
+        "/sales/",
+        json={
+            "total_amount": 3000,
+            "user_id": staff_user["user_id"],
+            "customer_id": customer_id,
+        },
+        headers=staff_auth_headers,
+    ).json()["sale_id"]
     own_receipt = client.post(
-        "/receipts/", json={"receipt_number": "OWN-001", "sale_id": own_sale_id}, headers=staff_auth_headers
+        "/receipts/",
+        json={"receipt_number": "OWN-001", "sale_id": own_sale_id},
+        headers=staff_auth_headers,
     )
     own_receipt_id = own_receipt.json()["receipt_id"]
 
-    other_sale_id = client.post("/sales/", json={
-        "total_amount": 9000, "user_id": staff_user["user_id"],
-    }, headers=staff_auth_headers).json()["sale_id"]
+    other_sale_id = client.post(
+        "/sales/",
+        json={
+            "total_amount": 9000,
+            "user_id": staff_user["user_id"],
+        },
+        headers=staff_auth_headers,
+    ).json()["sale_id"]
     other_receipt = client.post(
-        "/receipts/", json={"receipt_number": "OTHER-001", "sale_id": other_sale_id}, headers=staff_auth_headers
+        "/receipts/",
+        json={"receipt_number": "OTHER-001", "sale_id": other_sale_id},
+        headers=staff_auth_headers,
     )
     other_receipt_id = other_receipt.json()["receipt_id"]
 

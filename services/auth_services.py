@@ -1,4 +1,5 @@
 from typing import Any
+
 import jwt
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
@@ -9,7 +10,6 @@ from core.security import (
     hash_password,
     verify_password,
 )
-
 from repositories.users import user_repository
 from schemas.users import UserCreate
 

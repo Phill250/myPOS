@@ -10,6 +10,7 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     """Used for public self-registration (/users/register).
     No role/is_active here — those are always set server-side."""
+
     username: str
     password: str
 
@@ -17,6 +18,7 @@ class UserCreate(BaseModel):
 class UserCreateByAdmin(UserBase):
     """Used only by the super-admin-only create endpoint (/users/, POST).
     Lets the admin set role and is_active explicitly."""
+
     password: str
 
 

@@ -1,9 +1,15 @@
 from sqlalchemy.orm import Session
+
 from models.library_rental_items import LibraryRentalItem
+
 
 class LibraryRentalItemRepository:
     def get(self, db: Session, id: int):
-        return db.query(LibraryRentalItem).filter(LibraryRentalItem.rental_item_id == id).first()
+        return (
+            db.query(LibraryRentalItem)
+            .filter(LibraryRentalItem.rental_item_id == id)
+            .first()
+        )
 
     def get_all(self, db: Session):
         return db.query(LibraryRentalItem).all()
@@ -26,5 +32,6 @@ class LibraryRentalItemRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 library_rental_item_repository = LibraryRentalItemRepository()

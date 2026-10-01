@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from models.suppliers import Supplier
+
 
 class SupplierRepository:
     def get(self, db: Session, id: int):
@@ -26,5 +28,6 @@ class SupplierRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 supplier_repository = SupplierRepository()

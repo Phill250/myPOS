@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from models.library_rentals import LibraryRental
+
 
 class LibraryRentalRepository:
     def get(self, db: Session, id: int):
@@ -9,7 +11,11 @@ class LibraryRentalRepository:
         return db.query(LibraryRental).all()
 
     def get_all_for_customer(self, db: Session, customer_id: int):
-        return db.query(LibraryRental).filter(LibraryRental.customer_id == customer_id).all()
+        return (
+            db.query(LibraryRental)
+            .filter(LibraryRental.customer_id == customer_id)
+            .all()
+        )
 
     def create(self, db: Session, data: dict):
         db_rental = LibraryRental(**data)

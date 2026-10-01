@@ -1,17 +1,14 @@
-from sqlalchemy import(
+from sqlalchemy import (
     Boolean,
     Column,
-    DateTime,
     ForeignKey,
     Integer,
     String,
-    Numeric,
 )
-
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql import func
+from sqlalchemy.orm import backref, relationship
 
 from database import Base
+
 
 class Customer(Base):
     __tablename__ = "customers"

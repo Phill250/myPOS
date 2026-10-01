@@ -28,12 +28,16 @@ def test_update_sale_success(client, staff_auth_headers, staff_user):
     create_response = client.post("/sales/", json=sale_data, headers=staff_auth_headers)
     sale_id = create_response.json()["sale_id"]
 
-    response = client.put(f"/sales/{sale_id}", json={"total_amount": 7500}, headers=staff_auth_headers)
+    response = client.put(
+        f"/sales/{sale_id}", json={"total_amount": 7500}, headers=staff_auth_headers
+    )
     assert response.status_code == 200
     assert response.json()["total_amount"] == 7500
 
 
-def test_update_sale_ignores_customer_id_reassignment(client, staff_auth_headers, staff_user):
+def test_update_sale_ignores_customer_id_reassignment(
+    client, staff_auth_headers, staff_user
+):
     """RetailSaleUpdate deliberately excludes customer_id/user_id — sending them
     should be silently ignored rather than changing who the sale belongs to."""
     sale_data = {"total_amount": 5000, "user_id": staff_user["user_id"]}
@@ -65,11 +69,15 @@ def test_delete_sale_success(client, staff_auth_headers, staff_user):
 
 
 def test_create_sale_missing_user_id_returns_422(client, staff_auth_headers):
-    response = client.post("/sales/", json={"total_amount": 5000}, headers=staff_auth_headers)
+    response = client.post(
+        "/sales/", json={"total_amount": 5000}, headers=staff_auth_headers
+    )
     assert response.status_code == 422
 
 
-def test_create_sale_invalid_amount_type_returns_422(client, staff_auth_headers, staff_user):
+def test_create_sale_invalid_amount_type_returns_422(
+    client, staff_auth_headers, staff_user
+):
     sale_data = {"total_amount": "not-a-number", "user_id": staff_user["user_id"]}
     response = client.post("/sales/", json=sale_data, headers=staff_auth_headers)
     assert response.status_code == 422
@@ -83,7 +91,9 @@ def test_create_sale_nonexistent_user_id_returns_400(client, staff_auth_headers)
     assert response.status_code == 400
 
 
-def test_update_sale_invalid_amount_type_returns_422(client, staff_auth_headers, staff_user):
+def test_update_sale_invalid_amount_type_returns_422(
+    client, staff_auth_headers, staff_user
+):
     sale_data = {"total_amount": 5000, "user_id": staff_user["user_id"]}
     create_response = client.post("/sales/", json=sale_data, headers=staff_auth_headers)
     sale_id = create_response.json()["sale_id"]
@@ -120,7 +130,9 @@ def test_delete_sale_without_credentials_returns_401(client):
 
 
 def test_create_sale_as_customer_returns_403(client, auth_headers):
-    response = client.post("/sales/", json={"total_amount": 5000, "user_id": 1}, headers=auth_headers)
+    response = client.post(
+        "/sales/", json={"total_amount": 5000, "user_id": 1}, headers=auth_headers
+    )
     assert response.status_code == 403
 
 
@@ -146,7 +158,9 @@ def test_delete_nonexistent_sale_returns_404(client, staff_auth_headers):
     assert response.status_code == 404
 
 
-def test_customer_sees_only_own_sales(client, staff_auth_headers, staff_user, auth_headers, test_user):
+def test_customer_sees_only_own_sales(
+    client, staff_auth_headers, staff_user, auth_headers, test_user
+):
     customer_data = {
         "first_name": "Test",
         "last_name": "Customer",
@@ -155,13 +169,19 @@ def test_customer_sees_only_own_sales(client, staff_auth_headers, staff_user, au
         "library_member": False,
         "user_id": test_user["user_id"],
     }
-    customer_response = client.post("/customers/", json=customer_data, headers=staff_auth_headers)
+    customer_response = client.post(
+        "/customers/", json=customer_data, headers=staff_auth_headers
+    )
     assert customer_response.status_code == 201
     customer_id = customer_response.json()["customer_id"]
 
     own_sale = client.post(
         "/sales/",
-        json={"total_amount": 3000, "user_id": staff_user["user_id"], "customer_id": customer_id},
+        json={
+            "total_amount": 3000,
+            "user_id": staff_user["user_id"],
+            "customer_id": customer_id,
+        },
         headers=staff_auth_headers,
     )
     own_sale_id = own_sale.json()["sale_id"]

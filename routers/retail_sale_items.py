@@ -1,9 +1,14 @@
 from fastapi import APIRouter, Depends, status
-from database import get_db
 from sqlalchemy.orm import Session
-from schemas.retail_sale_items import RetailSaleItemCreate, RetailSaleItemRead, RetailSaleItemUpdate
-from services import retail_sale_items as sale_item_service
+
+from database import get_db
 from dependencies import get_current_user, require_role
+from schemas.retail_sale_items import (
+    RetailSaleItemCreate,
+    RetailSaleItemRead,
+    RetailSaleItemUpdate,
+)
+from services import retail_sale_items as sale_item_service
 
 router = APIRouter(
     prefix="/sale-items",
@@ -37,7 +42,9 @@ def create_sale_item(data: RetailSaleItemCreate, db: Session = Depends(get_db)):
     response_model=RetailSaleItemRead,
     dependencies=[Depends(require_role("staff", "super_admin"))],
 )
-def update_sale_item(sale_item_id: int, data: RetailSaleItemUpdate, db: Session = Depends(get_db)):
+def update_sale_item(
+    sale_item_id: int, data: RetailSaleItemUpdate, db: Session = Depends(get_db)
+):
     return sale_item_service.update_sale_item(db, sale_item_id, data)
 
 

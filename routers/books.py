@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, status
-from database import get_db
 from sqlalchemy.orm import Session
+
+from database import get_db
+from dependencies import get_current_user, require_role
 from schemas.books import BookCreate, BookRead, BookUpdate
 from services import books as book_service
-from dependencies import get_current_user, require_role
 
-
-router = APIRouter(prefix="/books", tags=["books"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    prefix="/books", tags=["books"], dependencies=[Depends(get_current_user)]
+)
 
 
 @router.get("/", response_model=list[BookRead])

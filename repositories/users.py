@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from models.users import User
+
 
 class UserRepository:
     def get_by_id(self, db: Session, id: int):
@@ -29,5 +31,6 @@ class UserRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 user_repository = UserRepository()

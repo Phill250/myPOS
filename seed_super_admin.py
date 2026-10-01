@@ -1,7 +1,7 @@
-from models import receipts, suppliers, payments, library_rental_items, library_rentals, categories, books, customers, users, retail_sales, retail_sale_items
 from database import Session
-from services import auth_services
 from schemas.users import UserCreateByAdmin
+from services import auth_services
+
 
 def main():
     db = Session()
@@ -19,6 +19,7 @@ def main():
         print(f"Created super_admin '{user.username}' (user_id={user.user_id})")
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     main()

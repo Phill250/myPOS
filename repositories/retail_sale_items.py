@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
+
 from models.retail_sale_items import RetailSaleItem
+
 
 class RetailSaleItemRepository:
     def get(self, db: Session, id: int):
-        return db.query(RetailSaleItem).filter(RetailSaleItem.sale_item_id == id).first()
+        return (
+            db.query(RetailSaleItem).filter(RetailSaleItem.sale_item_id == id).first()
+        )
 
     def get_all(self, db: Session):
         return db.query(RetailSaleItem).all()
@@ -26,5 +30,6 @@ class RetailSaleItemRepository:
         db.delete(db_obj)
         db.commit()
         return True
+
 
 sale_item_repository = RetailSaleItemRepository()

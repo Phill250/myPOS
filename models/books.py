@@ -1,21 +1,18 @@
-from sqlalchemy import(
-    Boolean,
+from sqlalchemy import (
     Column,
-    DateTime,
     ForeignKey,
     Integer,
-    String,
     Numeric,
+    String,
 )
-
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from database import Base
 
+
 class Book(Base):
     __tablename__ = "books"
-    
+
     book_id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     author = Column(String, nullable=False)
@@ -26,7 +23,6 @@ class Book(Base):
     retail_stock = Column(Integer, nullable=False, default=0)
     library_stock = Column(Integer, nullable=False, default=0)
 
-    
     sale_items = relationship("RetailSaleItem", back_populates="book")
     rental_items = relationship("LibraryRentalItem", back_populates="book")
     category = relationship("Category", back_populates="books")

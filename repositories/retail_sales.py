@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+
 from models.retail_sales import RetailSale
+
 
 class RetailSaleRepository:
     def get(self, db: Session, id: int):
